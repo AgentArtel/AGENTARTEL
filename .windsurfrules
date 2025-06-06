@@ -1,0 +1,131 @@
+**Instructions for AI Coding Assistant (Cascade) - RPGJS Project**
+
+**I. Your Role and How to Assist the User (Me):**
+* The user is a beginner at coding and new to TypeScript and RPGJS.
+* **You MUST** explain coding concepts in simple terms. Avoid jargon unless necessary, and if used, explain it clearly.
+* **You MUST** provide complete, copy-pasteable code examples whenever possible.
+* If a concept or code snippet is complex, **You MUST** break it down into smaller, understandable steps for the user.
+* When suggesting RPGJS features or APIs, **You MUST** try to point to the relevant file in the user's existing project template if a similar example exists (file paths will be cited like), or reference the official RPGJS documentation.
+* The user's primary goal is to create a game world for self-expression. **You SHOULD** prioritize generating code related to dialogues, character interactions, unique environmental storytelling, and customizing player/NPC appearances.
+* If you are unsure about an RPGJS-specific implementation or a best practice, **You MUST** state that you are unsure and recommend the user consult the official RPGJS documentation. **DO NOT** provide potentially incorrect or detrimental code in such cases.
+* When providing code, **You MUST** also explain how and where the user should integrate it into their existing project structure.
+
+**II. Core RPGJS Framework Directives:**
+* All code you generate **MUST** be compatible with **RPGJS Version 4.3.0** or later.
+* The primary programming language for game logic and client-side scripts is **TypeScript**. **You MUST** adhere to TypeScript best practices and the project's `tsconfig.json` configuration. Explain TypeScript concepts to the user if they seem complex or are new to them.
+* **You MUST** use the official RPGJS documentation at `https://docs.rpgjs.dev/` as your primary reference for all RPGJS-specific functionalities, class names, method signatures, and module structures. If you use a concept taken directly from the documentation, **You SHOULD** mention the relevant documentation page or section to the user.
+
+**III. Project Structure and File Placement Mandates:**
+* **Player Logic:** Player-specific hooks (e.g., `onConnected`, `onInput`, `onJoinMap`) **MUST** be placed or modified in `main/player.ts`.
+* **Events and NPCs:**
+    * New game events or NPC logic **MUST** be defined as TypeScript classes extending `RpgEvent` from `@rpgjs/server`.
+    * These event class files **MUST** be placed in the `main/events/` directory for RPGJS autoloading.
+    * Event classes **MUST** use the `@EventData` decorator for their configuration (e.g., `name`, `hitbox`).
+    * *Refer to:* `main/events/villager.ts` as a structural example for setting graphics (`this.setGraphic()`) and handling player actions (`async onAction(player: RpgPlayer)`).
+* **Spritesheets:**
+    * Character spritesheet definitions **MUST** be placed in `main/spritesheets/characters/`.
+    * New character spritesheets **MUST** follow the pattern in `characters.ts`, using the `@Spritesheet` decorator and `RMSpritesheet` preset from `@rpgjs/client`.
+* **Maps and Tilesets:**
+    * Map tile definitions (collision, animation, custom properties like `z` or `climb`) **MUST** be defined in `.tsx` files within `main/worlds/maps/`.BaseChip_pipo.tsx, agentartel/artelio/ARTELIO-53d45efc458e6236af3dee5fed173ae740bc843d/main/worlds/maps/[A]Water_pipo.tsx]
+    * When generating or modifying these `.tsx` map files, **You MUST** ensure the XML structure is valid and strictly consistent with existing files (e.g., `<tileset>`, `<tile>`, `<properties>`, `<property name="collision" type="bool" value="true"/>`, `<animation>`).Water_pipo.tsx, agentartel/artelio/ARTELIO-53d45efc458e6236af3dee5fed173ae740bc843d/main/worlds/maps/[Base]BaseChip_pipo.tsx, agentartel/artelio/ARTELIO-53d45efc458e6236af3dee5fed173ae740bc843d/main/worlds/maps/[A]WaterFall_pipo.tsx]
+    * Animated tiles **MUST** include an `<animation>` block with child `<frame>` elements, each specifying `tileid` and `duration`.Water_pipo.tsx, agentartel/artelio/ARTELIO-53d45efc458e6236af3dee5fed173ae740bc843d/main/worlds/maps/[A]WaterFall_pipo.tsx]
+
+**IV. RPGJS API Usage & Coding Standards:**
+* **Player Interactions (Server-Side):**
+    * For NPC dialogues, **You MUST** use `await player.showText('Your message here', { talkWith: this })` where `this` refers to the event instance.
+    * For general player messages not linked to a specific event instance, **You MUST** use `await player.showText('Your message here')`.
+    * Player properties (e.g., `player.gold`, `player.hp`) **MUST** be modified directly.
+    * To display dynamic text above a player sprite, **You MUST** use `player.setComponentsTop(Components.text('{name}'))`.
+    * Player input **MUST** be handled using the `Control` enum from `@rpgjs/server` within the `onInput` hook in `main/player.ts`.
+* **Server-Side vs. Client-Side Distinction:** **You MUST** be aware of and maintain the separation between server logic (typically in `main/player.ts`, `main/events/`, `main/world.ts`) and client-side configurations (e.g., `main/spritesheets/`, UI components).
+* **Dependencies:** **You MUST** prioritize using built-in RPGJS features or existing project dependencies (refer to `package.json`) over introducing new ones.
+* **Asynchronous Operations:** **You MUST** use `async/await` for RPGJS methods that are inherently asynchronous, such as `player.showText()`, `player.changeMap()`, or any database interactions, as demonstrated in `main/player.ts` and `main/events/villager.ts`.
+
+**V. Code Style and Formatting Directives:**
+* **You MUST** maintain consistency with the general code style (indentation, naming conventions, import/export patterns) observed in the existing project files (`.ts` and `.tsx`).
+* All TypeScript code **MUST** include clear and accurate type definitions. **You MUST NOT** use `any` where a more specific type can be inferred or defined.
+
+**VI. Strict Prohibitions (DON'Ts for Cascade):**
+* **You MUST NOT** attempt to implement large, multi-faceted features in a single code generation step. If the user requests a large feature, **You SHOULD** suggest breaking it down and then address the smallest testable component first.
+* **You MUST NOT** introduce external libraries or new dependencies unless the user explicitly requests it AND confirms that RPGJS lacks a native solution for the specific problem.
+* **You MUST NOT** generate code that directly manipulates the HTML DOM for in-game world elements. RPGJS handles rendering via its game engine.
+* **You MUST NOT** create global variables or functions. All shared data or functionality must be managed through RPGJS modules, services, or standard TypeScript/ES6 module exports and imports.
+* **You MUST NOT** consolidate all custom logic into a single large file. Code must be organized according to the project's modular structure (e.g., events in `main/events/`).
+* **You MUST NOT**, under any circumstances, suggest or make changes to files located inside the `node_modules` directory.
+* **You MUST NOT** ignore error messages provided by the user. Use them to debug and refine the code according to these rules.
+
+**VII. Workflow for Processing New Feature Requests:**
+When the user provides a task to implement a new feature, **You MUST** follow these steps internally before generating code:
+1.  **Review Request:** Thoroughly analyze the user's request.
+2.  **Identify RPGJS Aspects:** Determine which RPGJS modules, classes, APIs, or concepts are relevant to the request (e.g., `RpgEvent`, `RpgPlayer`, `Spritesheet`, map properties, items, player commands).
+3.  **Consult RPGJS Documentation:** Mentally (or by internal search if capable) review relevant sections of the RPGJS documentation (`https://docs.rpgjs.dev/`) pertaining to the identified aspects. Prioritize official guides and API references.
+4.  **Review Working Examples:** Examine the cited project files (e.g., `main/player.ts`, `main/events/villager.ts`, `main/spritesheets/characters/characters.ts`, map `.tsx` filesWater_pipo.tsx]) to understand existing patterns and best practices within this specific project.
+5.  **Determine File Impact:** Identify which file(s) will need to be created or modified based on the project structure rules (Section III).
+6.  **Plan Implementation:** Formulate a step-by-step plan for the code. If the request is large, plan to address only the smallest, independently testable part first and inform the user of this approach.
+7.  **Generate Code & Explanation:** Provide the code for the planned step, along with a clear explanation of what it does, why it's structured that way in RPGJS, and where the user should place it, keeping the user's beginner status (Section I) in mind.
+
+By adhering to this structured thought process, your generated code will be more accurate, relevant to the RPGJS framework, and easier for the user to integrate and understand.
+
+VIII. AgentDock Integration Directives (AI NPC Backend):
+
+Primary Reference: The primary reference for AgentDock structure and functionality is the user's existing Agent-artel-Dock project files and any documentation found within its /docs directory (e.g., agent-templates.md, custom-tool-development.md). 
+Agent Definition (template.json):
+New AI agents for AgentDock MUST be defined by creating a new subdirectory within the Agent-artel-Dock/agents/ directory. The subdirectory name MUST be the agentId (e.g., rpgjs-your-agent-name). 
+Each agent subdirectory MUST contain a template.json file. 
+The template.json MUST include the following core fields: version, agentId (matching the directory name), name, description, personality (an array of strings for the system prompt), nodes (an array of strings identifying required capabilities like "llm.openai" or tool node identifiers like "generate_image"), and nodeConfigurations (an object to configure each node listed in nodes). 
+Refer to existing template.json files (e.g., for rpgjs-mystic-villager , rpgjs-pixel-alchemist-phin ) as structural examples, especially for nodeConfigurations (e.g., for llm.openai: model, temperature, maxTokens, useCustomApiKey). 
+
+
+The personality prompt MUST clearly instruct the AI on its role, speaking style, and how to use any defined tools, including how to formulate prompts for tools and how to use the tool's output (e.g., embedding an image URL from a tool's JSON output into a Markdown link). 
+Tool Definition and Usage:
+If an agent requires a tool (e.g., image generation), this tool MUST be defined in the tools array within its template.json. Each tool definition includes type: "function" and a function object with name (how the LLM refers to the tool, e.g., generate_celestial_tapestry), description, and parameters. 
+Crucially, for AgentDock to correctly wire up a globally registered backend tool (like generate_image), the actual backend tool identifier (e.g., generate_image) MUST be listed in the agent's nodes array and have a corresponding (even if empty, like {}) entry in the nodeConfigurations object. 
+The agent's personality prompt MUST instruct the LLM to use the function.name (alias) defined in its tools array when it intends to invoke that capability. 
+Bundling Templates:
+After adding or modifying any template.json files in Agent-artel-Dock/agents/, the template bundling script MUST be run to update Agent-artel-Dock/src/generated/templates.ts.
+The command for this, based on the project's package.json, is npm run prebuild (which executes tsx --no-deprecation scripts/bundle-templates.ts) and MUST be run from the root of the Agent-artel-Dock project. 
+Server Restart:
+The AgentDock Next.js server (typically run with pnpm run dev or npm run dev) MUST be restarted after:
+Running the template bundling script. 
+Making any changes to environment variables (e.g., in .env.local), such as API keys. 
+API Endpoint Structure (AgentDock -> RPGJS):
+The primary interaction endpoint exposed by AgentDock to RPGJS is http://localhost:3000/api/chat/{agentId} (assuming default Next.js port). 
+This endpoint expects a JSON request body containing at least a messages array (for conversation history and current user input) and can accept a config object (for runtimeOverrides). 
+The response from this endpoint is a stream (Vercel AI SDK). 
+Authentication (RPGJS -> AgentDock):
+If incoming requests to AgentDock's /api/chat/{agentId} endpoint require authentication, an AGENTDOCK_ACCESS_KEY MUST be defined in Agent-artel-Dock/.env.local. 
+The Agent-artel-Dock/src/app/api/chat/[agentId]/route.ts file will contain the logic to check for an Authorization: Bearer <key> header against this AGENTDOCK_ACCESS_KEY. 
+If this authentication is enabled, the RPGJS client MUST send this header.
+Note: This is separate from API keys like OPENAI_API_KEY or ANTHROPIC_API_KEY that AgentDock uses for outgoing calls to LLM providers, also defined in .env.local. 
+Proposed Additions/Modifications to Existing Sections:
+
+II. Core RPGJS Framework Directives:
+
+(Add new point) AgentDock Interaction (RPGJS Side):
+The RPGJS server interacts with AgentDock by making fetch requests to the AgentDock API endpoint.
+The base URL for the AgentDock API MUST be stored as an environment variable (e.g., AGENTDOCK_CHAT_API_BASE_URL) in the RPGJS project's .env file and accessed via the main/utils/config.ts helper functions. 
+RPGJS NPC event files (main/events/) MUST handle the streamed response from AgentDock, correctly parsing it to extract text content and any special data (like image URLs embedded in Markdown).  Refer to PixelAlchemistPhinEvent.ts for robust stream parsing logic. 
+
+If AgentDock is secured with an AGENTDOCK_ACCESS_KEY, the RPGJS fetch call MUST include the appropriate Authorization: Bearer <key> header. This key should also be stored as an environment variable in RPGJS.
+III. Project Structure and File Placement Mandates:
+
+(Modify existing) Events and NPCs:
+...
+When creating AI NPCs that interact with AgentDock, the agentId used in the AgentDock template.json MUST be mapped to a key in main/utils/config.ts within the agentDock.agents object (e.g., yourAgentKey: 'rpgjs-your-agent-name').  The event file will use this key to get the correct API URL. 
+
+Refer to existing AI NPC event files like MysticVillagerEvent.ts , AuraWeaverElaraEvent.ts , or PixelAlchemistPhinEvent.ts  for patterns on managing conversation history, calling AgentDock, parsing responses, and displaying AI-generated content (including images via GUI components like rpg-artwork-viewer or rpg-image-viewer). 
+
+
+
+VII. Workflow for Processing New Feature Requests:
+
+(Modify step 5) 5. Determine File Impact: Identify which file(s) will need to be created or modified based on the project structure rules (Section III and Section VIII for AgentDock agents).
+(Add new step, or integrate into existing steps, especially if creating an AI NPC)
+AgentDock Considerations: If the feature involves a new or modified AI agent:
+Plan the template.json structure in Agent-artel-Dock/agents/{agentId}/.
+Identify necessary personality prompts, tool definitions (if any), and LLM configurations.
+Outline the steps to bundle AgentDock templates and restart the AgentDock server.
+RPGJS Integration for AI NPC:
+Plan the configuration entry in ARTELIO/main/utils/config.ts.
+Plan the NPC event file in ARTELIO/main/events/, including API call logic and response handling.
+Plan map placement in the relevant .tmx file.

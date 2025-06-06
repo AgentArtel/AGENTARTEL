@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "target": "es2020",
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "strict": true,
+    "declaration": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "jsx": "preserve",
+    "incremental": false,
+    "paths": {
+      "agentdock-core/*": ["./src/*"]
+    }
+  },
+  "include": ["src/**/*"],
+  "exclude": ["**/__tests__/**/*", "node_modules"]
+}
